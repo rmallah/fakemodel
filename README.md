@@ -1,6 +1,14 @@
 # fakemodel
 Generates placeholder QML models based on specifications
 
+This perl script can be used to generate models with fake
+data conforming to some type and specifications. This can
+be handy when you do not have fully developed working APIs 
+yet and you have to create a wireframe for a prototype.
+Instead of had creating the models you can use this script
+that uses lorem ipsum texts and random numbers to give a
+temporary model.
+
 
 # usage
 
