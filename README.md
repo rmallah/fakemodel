@@ -1,13 +1,10 @@
 # fakemodel
 Generates placeholder QML models based on specifications
 
-This perl script can be used to generate models with fake
-data conforming to some type and specifications. This can
-be handy when you do not have fully developed working APIs 
-yet and you have to create a wireframe for a prototype.
-Instead of hand creating the models you can use this script
-to rapidly generate models by using lorem ipsum texts and 
-random numbers have a temporary model.
+This perl script can be used to generate models with fake data conforming to some data type and specifications. This can
+be handy when you do not have a fully developed working API for real data and you have to quickly create a wireframe or 
+a prototype. Instead of hand creating the models you can use  this script to rapidly generate models by using lorem ipsum texts 
+and  random numbers to have a temporary model.
 
 
 # usage
@@ -96,5 +93,16 @@ Students {
             generated: 1512164838
     }
 }
+
+```
+
+# installation
+
+this script needs few perl modules like `Getopt::ArgParse` , `Text::Lorem`  `Log::Log4perl`
+in ubuntu you can install them by
+
+```
+ $ sudo apt-get install perl-modules libtext-lorem-perl liblog-log4perl-perl  cpanminus
+ $ sudo cpanm Getopt::ArgParse
 
 ```
