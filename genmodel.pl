@@ -6,6 +6,9 @@ use strict;
 use Getopt::ArgParse ;
 use Text::Lorem;
 use Text::Wrap;
+use LWP::Simple;
+use JSON::XS;
+use DDP;
 
 use Log::Log4perl qw(:easy);
 Log::Log4perl->easy_init($DEBUG);
@@ -14,6 +17,10 @@ Log::Log4perl->easy_init($DEBUG);
 my $logger = get_logger();
 
 # $logger -> debug ("Program invoked with args: @ARGV");
+
+my @random_images = ();
+my $images_initialized = 0;
+
 
 my $ap = Getopt::ArgParse->new_parser(
         prog        => "$0" ,
@@ -34,6 +41,7 @@ possible types:
 'float'  : a floating point value between 0 100
 'serial' : an autoincremting number with each list element.
 'epoch'  : an epoch value (unix timestamp) between min to max days from now . (use negative for timestamps of past)
+'image'  : this will put a random photo url from flickr https://api.flickr.com/services/feeds/photos_public.gne?tags=nature
 
 range specs:
 each type can be optionally followed by min:max that allows
@@ -118,6 +126,13 @@ sub ListElement {
 					my $now = time ;
 					my $randdays = randNumber($min || -30 , $max || 0);
 					$fakevalue = int( $now + $randdays * 86400);
+				} elsif ($type eq 'imageurl') {
+						if (! $images_initialized) {
+								my $tag = $min ;
+								&initRandomFlickerPhotos($tag || 'nature' ) ;
+						}
+						my $url =  $random_images[ rand @random_images ];
+						$fakevalue = "'" . $url . "'"  ;
 				}
 
 				else {
@@ -143,3 +158,25 @@ sub randNumber {
 }
 
 
+
+sub initRandomFlickerPhotos {
+
+	my ($tag) = @_;
+
+	my $url = "https://api.flickr.com/services/feeds/photos_public.gne?tags=$tag&format=json";
+
+ 	my $content = get($url);
+  die "Couldn't get flicker data , please check connectivity and retry!\n" unless defined $content;
+	$content =~ m#jsonFlickrFeed\((.*)\)#s;
+	my $json = $1;
+  die "Couldn't get json data!\n" unless $json;
+
+	my $data  = decode_json $json ;
+
+	my @items = @{$data->{items}} ;
+
+	@random_images = map { $_->{media}->{m} } @items;
+
+	$images_initialized = 1;
+
+}
